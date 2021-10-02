@@ -1,8 +1,10 @@
-aiogram==2.13
+aiogram==2.15
 
 # [speedup]-[BEGIN]
-uvloop==0.15.2
-ujson==4.0.2
+uvloop==0.16.0
+ujson==4.2.0
 cchardet==2.1.7
-aiohttp[speedups]==3.7.4
+aiohttp[speedups]==3.7.4.post0
 # [speedup]-[END]
+
+pydantic[dotenv]==1.8.2
