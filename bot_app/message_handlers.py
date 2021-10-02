@@ -1,5 +1,6 @@
 from aiogram import types
 
+from config.loggers import get_message_logger
 from .bot import dp
 
 
@@ -13,4 +14,8 @@ async def send_welcome(message: types.Message):
 
 @dp.message_handler()
 async def echo(message: types.Message):
+    logger = get_message_logger()
+    logger.info('echo.before')
     await message.answer(message.text)
+    await message.reply(message.text)
+    logger.info('echo.after')
