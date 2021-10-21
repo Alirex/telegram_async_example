@@ -3,7 +3,6 @@ import random
 
 from aiogram import types
 from aiogram.dispatcher import FSMContext
-from aiogram.dispatcher.filters import Text
 
 from config.loggers import get_message_logger
 from .bot import dp
@@ -29,6 +28,24 @@ async def send_welcome(message: types.Message):
 
 
 # [example_state]-[BEGIN]
+# You can use state '*' if you need to handle all states
+@dp.message_handler(state='*', commands='cancel')
+async def cancel_handler(message: types.Message, state: FSMContext):
+    """
+    Allow user to cancel any action
+    """
+    current_state = await state.get_state()
+    if current_state is None:
+        return
+
+    logging.info(f'Cancelling state {current_state}')
+
+    # Cancel state and inform user about it
+    await state.finish()
+    # And remove keyboard (just in case)
+    await message.reply('Cancelled.', reply_markup=types.ReplyKeyboardRemove())
+
+
 @dp.message_handler(commands=['example_state', ])
 async def start_state__example_state(message: types.Message):
     # Set current state to this.
@@ -60,10 +77,12 @@ async def example_state__process_age(message: types.Message, state: FSMContext):
         age = int(message.text)
     except ValueError:
         await message.reply("This must be a number")
+        await message.answer("How old are you?")
         return
 
     if age <= 0:
         await message.reply("Age must be more then 0")
+        await message.answer("How old are you?")
         return
     # [validating]-[END]
 
@@ -87,25 +106,6 @@ async def example_state__process_city(message: types.Message, state: FSMContext)
         await message.reply(f"After finish: {data}")
 
     await message.reply('end')
-
-
-# You can use state '*' if you need to handle all states
-@dp.message_handler(state='*', commands='cancel')
-@dp.message_handler(Text(equals='cancel', ignore_case=True), state='*')
-async def cancel_handler(message: types.Message, state: FSMContext):
-    """
-    Allow user to cancel any action
-    """
-    current_state = await state.get_state()
-    if current_state is None:
-        return
-
-    logging.info(f'Cancelling state {current_state}')
-
-    # Cancel state and inform user about it
-    await state.finish()
-    # And remove keyboard (just in case)
-    await message.reply('Cancelled.', reply_markup=types.ReplyKeyboardRemove())
 
 
 # [example_state]-[END]
