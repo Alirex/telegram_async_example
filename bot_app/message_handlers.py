@@ -63,6 +63,9 @@ async def example_state__process_name(message: types.Message, state: FSMContext)
 
         data['some random value'] = random.randint(1, 10)
 
+        for key, value in data.items():
+            print(f'{key} - {value} ({type(value)})')
+
     await ExampleForm.next()
     await message.reply("How old are you?")
 
